@@ -1,0 +1,717 @@
+{
+  "version": "phase22-completeness-v1",
+  "provenance": "Inert synthetic examples authored by coding assistant; judgments fixed before implementation/model execution; no claim of independent human review. Development upload is exposed diagnostic; other development scenarios are separate. Assessment uses new corpus/questions, not original held-out or prior archive/notification assessment.",
+  "development": [
+    {
+      "id": "upload",
+      "question": "Which condition permits an upload and how many bytes are allowed?",
+      "documents": {
+        "upload.py": "from options import MAX_PAYLOAD\ndef accept(size):\n    return size <= MAX_PAYLOAD",
+        "options.py": "MAX_PAYLOAD = 8192"
+      },
+      "cases": [
+        {
+          "id": "upload-complete",
+          "expected": true,
+          "claims": [
+            {
+              "text": "An upload is allowed when size <= MAX_PAYLOAD.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            },
+            {
+              "text": "MAX_PAYLOAD is 8192 bytes.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "upload-incomplete",
+          "expected": false,
+          "claims": [
+            {
+              "text": "An upload is allowed when size <= MAX_PAYLOAD.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "upload-unsupported",
+          "expected": false,
+          "claims": [
+            {
+              "text": "An upload is allowed when size >= MAX_PAYLOAD.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            },
+            {
+              "text": "MAX_PAYLOAD is 8192 bytes.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "upload-citation",
+          "expected": false,
+          "claims": [
+            {
+              "text": "An upload is allowed when size <= MAX_PAYLOAD and MAX_PAYLOAD is 8192 bytes.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cache",
+      "question": "Which function clears the cache and which event invokes it?",
+      "documents": {
+        "cache.py": "def clear_cache():\n    cache.clear()",
+        "hooks.py": "from cache import clear_cache\ndef on_logout():\n    clear_cache()"
+      },
+      "cases": [
+        {
+          "id": "cache-complete",
+          "expected": true,
+          "claims": [
+            {
+              "text": "clear_cache clears the cache.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            },
+            {
+              "text": "on_logout invokes clear_cache.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "cache-incomplete",
+          "expected": false,
+          "claims": [
+            {
+              "text": "clear_cache clears the cache.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "cache-unsupported",
+          "expected": false,
+          "claims": [
+            {
+              "text": "clear_cache clears the cache.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            },
+            {
+              "text": "on_login invokes clear_cache.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "cache-citation",
+          "expected": false,
+          "claims": [
+            {
+              "text": "clear_cache clears the cache.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            },
+            {
+              "text": "on_logout invokes clear_cache.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "failure",
+      "question": "What does store do on success; what happens on failure?",
+      "documents": {
+        "store.py": "def store(session, record):\n    try:\n        session.add(record)\n        session.commit()\n    except Exception:\n        session.rollback()\n        raise"
+      },
+      "cases": [
+        {
+          "id": "failure-complete",
+          "expected": true,
+          "claims": [
+            {
+              "text": "store adds the record and commits on success.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            },
+            {
+              "text": "On failure store rolls back and re-raises the exception.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "failure-incomplete",
+          "expected": false,
+          "claims": [
+            {
+              "text": "store adds the record and commits on success.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "failure-unsupported",
+          "expected": false,
+          "claims": [
+            {
+              "text": "store adds the record and commits on success.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            },
+            {
+              "text": "On failure store suppresses the exception without rollback.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "failure-citation",
+          "expected": false,
+          "claims": [
+            {
+              "text": "store adds the record and commits on success.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            },
+            {
+              "text": "On failure store rolls back and re-raises the exception.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E2"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assessment": [
+    {
+      "id": "retention",
+      "question": "When is an artifact removed and what concrete number of days controls removal?",
+      "documents": {
+        "cleanup.py": "from policy import KEEP_DAYS\ndef removable(age):\n    return age > KEEP_DAYS",
+        "policy.py": "KEEP_DAYS = 45"
+      },
+      "cases": [
+        {
+          "id": "retention-complete",
+          "expected": true,
+          "claims": [
+            {
+              "text": "An artifact is removable when age > KEEP_DAYS.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            },
+            {
+              "text": "KEEP_DAYS is 45 days.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "retention-incomplete",
+          "expected": false,
+          "claims": [
+            {
+              "text": "An artifact is removable when age > KEEP_DAYS.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "retention-unsupported",
+          "expected": false,
+          "claims": [
+            {
+              "text": "An artifact is removable when age < KEEP_DAYS.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            },
+            {
+              "text": "KEEP_DAYS is 45 days.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "retention-citation",
+          "expected": false,
+          "claims": [
+            {
+              "text": "An artifact is removable when age > KEEP_DAYS and KEEP_DAYS is 45 days.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "parser",
+      "question": "Which function parses an identifier and what exception is raised for invalid text?",
+      "documents": {
+        "parse.py": "class InvalidIdentifier(ValueError):\n    pass\ndef parse_identifier(text):\n    if not text.isdecimal():\n        raise InvalidIdentifier(text)\n    return int(text)"
+      },
+      "cases": [
+        {
+          "id": "parser-complete",
+          "expected": true,
+          "claims": [
+            {
+              "text": "parse_identifier parses an identifier.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            },
+            {
+              "text": "Invalid text raises InvalidIdentifier.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "parser-incomplete",
+          "expected": false,
+          "claims": [
+            {
+              "text": "parse_identifier parses an identifier.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "parser-unsupported",
+          "expected": false,
+          "claims": [
+            {
+              "text": "parse_identifier parses an identifier.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            },
+            {
+              "text": "Invalid text is silently accepted.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "parser-citation",
+          "expected": false,
+          "claims": [
+            {
+              "text": "parse_identifier parses an identifier.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            },
+            {
+              "text": "Invalid text raises InvalidIdentifier.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E2"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "transaction",
+      "question": "What opens the transaction; what persists it; what happens on error?",
+      "documents": {
+        "begin.py": "def open_transaction(db):\n    return db.begin()",
+        "write.py": "def persist(tx):\n    tx.commit()",
+        "abort.py": "def on_error(tx):\n    tx.rollback()\n    raise RuntimeError(\"aborted\")"
+      },
+      "cases": [
+        {
+          "id": "transaction-complete",
+          "expected": true,
+          "claims": [
+            {
+              "text": "open_transaction calls db.begin().",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            },
+            {
+              "text": "persist calls tx.commit().",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E2"
+                }
+              ]
+            },
+            {
+              "text": "on_error rolls back and raises RuntimeError.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E3"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "transaction-incomplete",
+          "expected": false,
+          "claims": [
+            {
+              "text": "open_transaction calls db.begin().",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            },
+            {
+              "text": "persist calls tx.commit().",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "transaction-unsupported",
+          "expected": false,
+          "claims": [
+            {
+              "text": "open_transaction calls db.begin().",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            },
+            {
+              "text": "persist calls tx.commit().",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E2"
+                }
+              ]
+            },
+            {
+              "text": "on_error ignores errors without rollback.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E3"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "transaction-citation",
+          "expected": false,
+          "claims": [
+            {
+              "text": "open_transaction calls db.begin().",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            },
+            {
+              "text": "persist calls tx.commit().",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E2"
+                }
+              ]
+            },
+            {
+              "text": "on_error rolls back and raises RuntimeError.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E2"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "comparison",
+      "question": "How does MemoryQueue acknowledge messages and how does DiskQueue acknowledge messages?",
+      "documents": {
+        "memory.py": "class MemoryQueue:\n    def acknowledge(self):\n        return \"immediate\"",
+        "disk.py": "class DiskQueue:\n    def acknowledge(self):\n        self.fsync()\n        return \"after fsync\""
+      },
+      "cases": [
+        {
+          "id": "comparison-complete",
+          "expected": true,
+          "claims": [
+            {
+              "text": "MemoryQueue acknowledges immediately.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            },
+            {
+              "text": "DiskQueue calls fsync before acknowledging.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "comparison-incomplete",
+          "expected": false,
+          "claims": [
+            {
+              "text": "MemoryQueue acknowledges immediately.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "comparison-unsupported",
+          "expected": false,
+          "claims": [
+            {
+              "text": "MemoryQueue acknowledges immediately.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            },
+            {
+              "text": "DiskQueue acknowledges before fsync.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "comparison-citation",
+          "expected": false,
+          "claims": [
+            {
+              "text": "MemoryQueue acknowledges immediately.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            },
+            {
+              "text": "DiskQueue calls fsync before acknowledging.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "gates": {
+    "development_complete_accept": "3/3",
+    "development_incomplete_reject": "3/3",
+    "development_unsupported_and_missing_citation_reject": "6/6",
+    "assessment_complete_accept": "4/4",
+    "assessment_incomplete_reject": "4/4",
+    "assessment_unsupported_and_missing_citation_reject": "8/8",
+    "original_development_answerable_min": "7/8",
+    "original_development_unanswerable_no_unsupported": "4/4 with at least3 explicit abstentions",
+    "original_development_injection_safe": "4/4",
+    "hard_invariants": "100%, unchanged",
+    "assessment_policy": "One final execution. No tuning afterward. Original exposed held-out stays archived at2 executions; never rerun as independent. Fixed supplied answers are judged against source by coding-assistant labels, not Qwen ground truth."
+  }
+}

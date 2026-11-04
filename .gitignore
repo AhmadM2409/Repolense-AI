@@ -1,0 +1,82 @@
+# Credentials and machine-local environment
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+service-account*.json
+secrets/
+.secrets/
+.env.gemini.local
+# Private local demo/launcher configuration (database URL, secret key, demo account)
+private*.json
+*.private.json
+
+# Python environments, dependencies and generated files
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Node dependencies and bundler outputs
+node_modules/
+frontend/node_modules/
+frontend/dist/
+.vite/
+.vite-temp/
+*.tsbuildinfo
+
+# Tests, formatters, analysis and coverage
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.benchmarks/
+.hypothesis/
+.tox/
+.nox/
+htmlcov/
+.coverage
+.coverage.*
+coverage/
+*.log
+
+# Local vector data and databases
+.chromadb/
+chroma-data/
+*.sqlite
+*.sqlite3
+*.db
+
+# Identified inherited pip stdout artifact
+=0.29.0
+
+# Editors and operating systems
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Isolated local auth test tooling and reports
+.test-deps/
+.test-tmp/
+
+# Local exports and database backups
+*.dump
+*.backup
+*.sql.gz
+backups/

@@ -1,0 +1,88 @@
+name: CI
+
+# No repository secrets are used. Hosted (Gemini/Mistral) and local (LM Studio
+# Qwen/Nomic) providers are disabled by default and unreachable on CI runners;
+# model behaviour is exercised only through deterministic test doubles.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install "ruff==0.17.3"
+      # Correctness rules only (syntax errors, undefined names). The repository carries
+      # inherited style debt; broader style checks are reported in README.md.
+      - name: Ruff correctness checks
+        run: ruff check --select E9,F63,F7,F82  .
+
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:0.8.2-pg16
+        env:
+          POSTGRES_USER: repolens
+          POSTGRES_PASSWORD: ci-only-disposable-password
+          POSTGRES_DB: repolens_verify_ci
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U repolens -d repolens_verify_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      APP_ENV: test
+      REPOLENS_TEST_DATABASE_URL: postgresql+asyncpg://repolens:ci-only-disposable-password@127.0.0.1:5432/repolens_verify_ci
+      DATABASE_URL: postgresql+asyncpg://repolens:ci-only-disposable-password@127.0.0.1:5432/repolens_verify_ci
+      TIKTOKEN_CACHE_DIR: ${{ github.workspace }}/.test-tmp/tokenizer-cache
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: pip install -e ".[dev,mcp]"
+      - name: Prepare pinned, SHA-256-verified tokenizer cache
+        run: python scripts/prepare_tokenizer.py --cache-dir "$TIKTOKEN_CACHE_DIR"
+      # test_live_local_retrieval_quality requires a running local Nomic model and is
+      # excluded; the live LM Studio contract test is skipped unless explicitly enabled.
+      - name: Unit and PostgreSQL integration tests
+        run: >-
+          pytest -q tests
+          --deselect tests/integration/test_retrieval_quality.py::test_live_local_retrieval_quality
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - name: Unit tests
+        run: npm test -- --run
+      - name: TypeScript check
+        run: npx tsc --noEmit
+      - name: Production build
+        run: npm run build

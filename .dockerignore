@@ -1,0 +1,27 @@
+.git
+.env
+.env.*
+!.env.example
+.venv
+.test-deps
+.test-tmp
+**/__pycache__
+**/.pytest_cache
+**/node_modules
+**/dist
+**/.cache
+
+# Private sources must never enter image build context
+private*.json
+**/private*.json
+*.private.json
+**/*.private.json
+secrets
+.secrets
+**/*.pem
+**/*.key
+**/*.p12
+**/*.pfx
+**/*.dump
+**/*.backup
+**/*.sql.gz

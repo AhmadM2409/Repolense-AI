@@ -1,0 +1,471 @@
+{
+  "version": "phase22-semantic-development-v1",
+  "provenance": "New inert synthetic development cases authored/labeled by coding assistant before implementation; not independent human evaluation. No expected labels are passed to Qwen. Original exposed assessments are preserved separately,not used as unseen tests.",
+  "development": [
+    {
+      "id": "delivery",
+      "question": "Describe finish behavior.",
+      "documents": {
+        "delivery.py": "def finish(parcel):\n    persist(parcel)\n    return \"receipt\""
+      },
+      "cases": [
+        {
+          "id": "delivery-good",
+          "expected_verdict": "supported",
+          "expected": true,
+          "claims": [
+            {
+              "text": "finish persists the parcel before returning a receipt.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "delivery-order",
+          "expected_verdict": "contradicted",
+          "expected": false,
+          "claims": [
+            {
+              "text": "finish returns a receipt before persisting the parcel.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "delivery-unknown",
+          "expected_verdict": "insufficient",
+          "expected": false,
+          "claims": [
+            {
+              "text": "finish encrypts the parcel using AES.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "read_only",
+      "question": "Describe store behavior.",
+      "documents": {
+        "store.py": "READ_ONLY = True\ndef store():\n    raise PermissionError(\"read only\")"
+      },
+      "cases": [
+        {
+          "id": "read_only-good",
+          "expected_verdict": "supported",
+          "expected": true,
+          "claims": [
+            {
+              "text": "store prevents writing by raising PermissionError.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "read_only-negation",
+          "expected_verdict": "contradicted",
+          "expected": false,
+          "claims": [
+            {
+              "text": "store never raises PermissionError.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "read_only-unknown",
+          "expected_verdict": "insufficient",
+          "expected": false,
+          "claims": [
+            {
+              "text": "The file is replicated to a remote backup service.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "condition",
+      "question": "When is emit called?",
+      "documents": {
+        "send.py": "def send(valid):\n    if valid:\n        emit()\n        return True\n    return False"
+      },
+      "cases": [
+        {
+          "id": "condition-good",
+          "expected_verdict": "supported",
+          "expected": true,
+          "claims": [
+            {
+              "text": "send calls emit only when valid is true.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "condition-condition",
+          "expected_verdict": "contradicted",
+          "expected": false,
+          "claims": [
+            {
+              "text": "send calls emit only when valid is false.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "condition-unknown",
+          "expected_verdict": "insufficient",
+          "expected": false,
+          "claims": [
+            {
+              "text": "emit delivers the message within a second.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "predicate",
+      "question": "Describe allowed.",
+      "documents": {
+        "predicate.py": "def allowed(active):\n    return not active"
+      },
+      "cases": [
+        {
+          "id": "predicate-good",
+          "expected_verdict": "supported",
+          "expected": true,
+          "claims": [
+            {
+              "text": "allowed returns True when active is false.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "predicate-boolean",
+          "expected_verdict": "contradicted",
+          "expected": false,
+          "claims": [
+            {
+              "text": "allowed returns True when active is true.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "predicate-unknown",
+          "expected_verdict": "contradicted",
+          "expected": false,
+          "claims": [
+            {
+              "text": "allowed checks administrator membership.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "config",
+      "question": "Describe the runtime flags.",
+      "documents": {
+        "config.py": "THREADS = 6\nENABLED = False"
+      },
+      "cases": [
+        {
+          "id": "config-good",
+          "expected_verdict": "supported",
+          "expected": true,
+          "claims": [
+            {
+              "text": "THREADS is 6 and ENABLED is False.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "config-value",
+          "expected_verdict": "contradicted",
+          "expected": false,
+          "claims": [
+            {
+              "text": "ENABLED is True.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "config-unknown",
+          "expected_verdict": "insufficient",
+          "expected": false,
+          "claims": [
+            {
+              "text": "The encryption key rotates daily.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "return",
+      "question": "Describe phase.",
+      "documents": {
+        "phase.py": "def phase():\n    return \"queued\""
+      },
+      "cases": [
+        {
+          "id": "return-good",
+          "expected_verdict": "supported",
+          "expected": true,
+          "claims": [
+            {
+              "text": "phase returns \"queued\".",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "return-return",
+          "expected_verdict": "contradicted",
+          "expected": false,
+          "claims": [
+            {
+              "text": "phase returns \"running\".",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "return-unknown",
+          "expected_verdict": "insufficient",
+          "expected": false,
+          "claims": [
+            {
+              "text": "The queue stores tasks in Redis.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "errors",
+      "question": "What happens on TimeoutError?",
+      "documents": {
+        "fetch.py": "def fetch(client):\n    try:\n        client.read()\n    except TimeoutError:\n        return \"retry\"\n    return \"ok\""
+      },
+      "cases": [
+        {
+          "id": "errors-good",
+          "expected_verdict": "supported",
+          "expected": true,
+          "claims": [
+            {
+              "text": "fetch returns \"retry\" on TimeoutError.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "errors-errors",
+          "expected_verdict": "contradicted",
+          "expected": false,
+          "claims": [
+            {
+              "text": "fetch re-raises TimeoutError instead of returning a value.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "errors-unknown",
+          "expected_verdict": "insufficient",
+          "expected": false,
+          "claims": [
+            {
+              "text": "The timeout duration is configured by an environment variable.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "comparison",
+      "question": "What condition permits a batch?",
+      "documents": {
+        "batch.py": "MIN_SIZE = 4\ndef permitted(size):\n    return size >= MIN_SIZE"
+      },
+      "cases": [
+        {
+          "id": "comparison-good",
+          "expected_verdict": "supported",
+          "expected": true,
+          "claims": [
+            {
+              "text": "permitted accepts size >= MIN_SIZE.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "comparison-comparison",
+          "expected_verdict": "contradicted",
+          "expected": false,
+          "claims": [
+            {
+              "text": "permitted accepts size < MIN_SIZE.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "comparison-unknown",
+          "expected_verdict": "insufficient",
+          "expected": false,
+          "claims": [
+            {
+              "text": "Batches are durably encrypted on disk.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assessment": [],
+  "gates": {
+    "development_accept_supported": "8/8",
+    "development_reject_other": "16/16",
+    "typed_semantic_labels": "Report exact four-way classification separately; invalid reference/literal/comparison cases may fail before Qwen.",
+    "new_assessment_policy": "Create distinct scenarios only after correction stabilizes;freeze labels/gates before first execution;one execution,no post-assessment tuning.",
+    "original_qa_gates": "At least7/8 answerable;unchanged100% safety/ownership/canonical invariants;all required incomplete negatives reject.",
+    "mandatory_negative_acceptance": "0 false accepts;do not lower thresholds"
+  }
+}

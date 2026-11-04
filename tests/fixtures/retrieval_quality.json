@@ -1,0 +1,182 @@
+{
+  "version": "synthetic-phase1-v1",
+  "provenance": "Original synthetic non-executed source fixture authored for these tests; no remote provenance claim. Labels fixed before retrieval.",
+  "documents": {
+    "auth/passwords.py": "def verify_password(password, password_hash):\n    \"\"\"Verify a salted bcrypt password hash; reject invalid credentials.\"\"\"\n    return bcrypt.checkpw(password, password_hash)\n",
+    "auth/tokens.py": "def decode_access_token(token, signing_key):\n    \"\"\"Validate JWT signature and expiration before accepting the subject.\"\"\"\n    return jwt.decode(token, signing_key, algorithms=[\"HS256\"])\n",
+    "auth/principal.py": "def require_active_user(user):\n    \"\"\"Reject inactive or deleted users with an authentication error.\"\"\"\n    if user is None or not user.is_active:\n        raise AuthenticationError()\n",
+    "security/ownership.py": "def require_repository_owner(profile, user_id):\n    \"\"\"Prevent cross-user repository access. Ownership comes from the authenticated principal.\"\"\"\n    if profile.user_id != user_id:\n        raise NotFound()\n",
+    "database/transactions.py": "async def save_document(session, document):\n    \"\"\"Commit atomically. Roll back the database transaction on persistence failure.\"\"\"\n    try:\n        session.add(document)\n        await session.commit()\n    except DatabaseError:\n        await session.rollback()\n        raise\n",
+    "database/pool.py": "def database_pool(url):\n    \"\"\"Bound database connections with pool_size=5 and max_overflow=0.\"\"\"\n    return create_async_engine(url, pool_size=5, max_overflow=0)\n",
+    "settings/secrets.py": "def validate_signing_secret(environment, signing_key):\n    \"\"\"Production requires an explicit random secret of at least 32 bytes; reject placeholders.\"\"\"\n    if environment == \"production\" and len(signing_key.encode()) < 32:\n        raise ConfigurationError()\n",
+    "github/revision.py": "async def resolve_revision(client, owner, repository):\n    \"\"\"Resolve the default branch to an immutable forty-character commit SHA.\"\"\"\n    return await client.resolve_commit(owner, repository)\n",
+    "github/paths.py": "def safe_path(path):\n    \"\"\"Reject absolute paths, traversal, symlinks and binary files before ingestion.\"\"\"\n    return not path.startswith(\"/\") and \"..\" not in path.split(\"/\")\n",
+    "jobs/retry.py": "def retry_delay(attempt):\n    \"\"\"Retry transient failures with bounded exponential backoff; stop after exhaustion.\"\"\"\n    return min(60, 2 ** attempt)\n",
+    "jobs/leases.py": "def claim_job(job, worker_id):\n    \"\"\"Claim queued work with a lease and fencing token; a stale worker cannot publish.\"\"\"\n    return job.new_attempt(worker_id)\n",
+    "jobs/cancellation.py": "def check_cancellation(job):\n    \"\"\"Cooperative cancellation stops publication without hard process termination.\"\"\"\n    if job.cancel_requested_at:\n        raise JobCancelled()\n",
+    "search/fusion.py": "def reciprocal_rank_fusion(keyword_rank, semantic_rank):\n    \"\"\"Combine one-based ranks with equal weights and k=60, never mix raw scores.\"\"\"\n    return 1 / (60 + keyword_rank) + 1 / (60 + semantic_rank)\n",
+    "search/citations.py": "def verify_citation(source, chunk):\n    \"\"\"Canonical path, commit SHA, inclusive line range and exact excerpt must match persisted text.\"\"\"\n    assert chunk.text == \"\\n\".join(source.text.splitlines()[chunk.line_start - 1:chunk.line_end])\n",
+    "http/errors.py": "def public_error(exception):\n    \"\"\"Sanitize failure responses: hide credentials, SQL parameters and private query contents.\"\"\"\n    return {\"detail\": \"Service temporarily unavailable\"}\n",
+    "cache/response.py": "def cached_response(cache, key):\n    \"\"\"Read an HTTP response from a cache with a short expiration time.\"\"\"\n    return cache.get(key)\n"
+  },
+  "queries": [
+    {
+      "id": "q01",
+      "category": "symbol",
+      "query": "verify_password",
+      "relevant": [
+        "auth/passwords.py"
+      ]
+    },
+    {
+      "id": "q02",
+      "category": "function",
+      "query": "Where are JWT access tokens decoded?",
+      "relevant": [
+        "auth/tokens.py"
+      ]
+    },
+    {
+      "id": "q03",
+      "category": "security",
+      "query": "How are inactive accounts rejected?",
+      "relevant": [
+        "auth/principal.py"
+      ]
+    },
+    {
+      "id": "q04",
+      "category": "security",
+      "query": "Stop one user from accessing another users repository",
+      "relevant": [
+        "security/ownership.py"
+      ]
+    },
+    {
+      "id": "q05",
+      "category": "database",
+      "query": "Roll back a failed database write",
+      "relevant": [
+        "database/transactions.py"
+      ]
+    },
+    {
+      "id": "q06",
+      "category": "database",
+      "query": "Limit the number of open database connections",
+      "relevant": [
+        "database/pool.py"
+      ]
+    },
+    {
+      "id": "q07",
+      "category": "configuration",
+      "query": "Production signing key minimum length",
+      "relevant": [
+        "settings/secrets.py"
+      ]
+    },
+    {
+      "id": "q08",
+      "category": "revision",
+      "query": "Resolve default branch to immutable SHA",
+      "relevant": [
+        "github/revision.py"
+      ]
+    },
+    {
+      "id": "q09",
+      "category": "paths",
+      "query": "Prevent directory traversal during ingestion",
+      "relevant": [
+        "github/paths.py"
+      ]
+    },
+    {
+      "id": "q10",
+      "category": "errors",
+      "query": "Retry transient network errors with backoff",
+      "relevant": [
+        "jobs/retry.py"
+      ]
+    },
+    {
+      "id": "q11",
+      "category": "workers",
+      "query": "Prevent an old worker from publishing results",
+      "relevant": [
+        "jobs/leases.py"
+      ]
+    },
+    {
+      "id": "q12",
+      "category": "workers",
+      "query": "Cancel work without killing the process",
+      "relevant": [
+        "jobs/cancellation.py"
+      ]
+    },
+    {
+      "id": "q13",
+      "category": "ranking",
+      "query": "reciprocal_rank_fusion",
+      "relevant": [
+        "search/fusion.py"
+      ]
+    },
+    {
+      "id": "q14",
+      "category": "citations",
+      "query": "Verify exact source lines and commit references",
+      "relevant": [
+        "search/citations.py"
+      ]
+    },
+    {
+      "id": "q15",
+      "category": "errors",
+      "query": "Avoid revealing secrets in error messages",
+      "relevant": [
+        "http/errors.py"
+      ]
+    },
+    {
+      "id": "q16",
+      "category": "ambiguous",
+      "query": "cache",
+      "relevant": [
+        "cache/response.py"
+      ]
+    },
+    {
+      "id": "q17",
+      "category": "multi_file",
+      "query": "Authenticate a token and reject disabled users",
+      "relevant": [
+        "auth/tokens.py",
+        "auth/principal.py"
+      ]
+    },
+    {
+      "id": "q18",
+      "category": "multi_file",
+      "query": "Secure JWT signature verification and production signing secrets",
+      "relevant": [
+        "auth/tokens.py",
+        "settings/secrets.py"
+      ]
+    },
+    {
+      "id": "q19",
+      "category": "no_answer",
+      "query": "Kubernetes autoscaling resource utilization",
+      "relevant": []
+    },
+    {
+      "id": "q20",
+      "category": "no_answer",
+      "query": "Image segmentation training learning rate",
+      "relevant": []
+    }
+  ]
+}

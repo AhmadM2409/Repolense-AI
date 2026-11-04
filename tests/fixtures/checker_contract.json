@@ -1,0 +1,39 @@
+{
+  "question": "How is the ready flag set and how is the enabled flag set?",
+  "evidence": {
+    "E1": {
+      "path": "state.py",
+      "text": "ready = True\n"
+    },
+    "E2": {
+      "path": "options.py",
+      "text": "enabled = False\n"
+    }
+  },
+  "answer": {
+    "status": "answered",
+    "claims": [
+      {
+        "text": "The ready flag is set to True.",
+        "kind": "observed",
+        "references": [
+          {
+            "evidence_id": "E1",
+            "quote": "ready = True"
+          }
+        ]
+      },
+      {
+        "text": "The enabled flag is set to False.",
+        "kind": "observed",
+        "references": [
+          {
+            "evidence_id": "E2",
+            "quote": "enabled = False"
+          }
+        ]
+      }
+    ],
+    "uncertainty": ""
+  }
+}

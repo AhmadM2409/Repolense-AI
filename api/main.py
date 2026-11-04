@@ -1,0 +1,138 @@
+import structlog
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.openapi.utils import get_openapi
+from fastapi.responses import JSONResponse
+
+from api.middleware.request_id import RequestIDMiddleware
+from api.routes import (
+    analysis,
+    career,
+    career_matching,
+    career_roadmap,
+    auth,
+    health,
+    ingestion,
+    investigations,
+    repository_workspace,
+    jobs,
+    profiles,
+    questions,
+    retrieval,
+    reviews,
+    search,
+)
+from core.database import init_db
+
+log = structlog.get_logger()
+
+# Create FastAPI application
+app = FastAPI(
+    title="RepoLens AI API",
+    description="Verified GitHub ingestion and deterministic source analysis",
+    version="1.0.0",
+)
+
+
+# Configure OpenAPI
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+
+    openapi_schema = get_openapi(
+        title="RepoLens AI API",
+        version="1.0.0",
+        description="Verified GitHub ingestion and deterministic source analysis",
+        routes=app.routes,
+    )
+
+
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+
+app.openapi = custom_openapi
+
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Add request ID middleware
+app.add_middleware(RequestIDMiddleware)
+
+
+# Exception handler for unhandled exceptions
+@app.exception_handler(Exception)
+async def generic_exception_handler(request: Request, exc: Exception):
+    request_id = getattr(request.state, "request_id", "unknown")
+    log.error(
+        "unhandled_exception",
+        request_id=request_id,
+        path=request.url.path,
+        method=request.method,
+        error_type=type(exc).__name__,
+    )
+    return JSONResponse(
+        status_code=500,
+        content={
+            "detail": "Internal server error",
+            "request_id": request_id,
+        },
+    )
+
+
+# Include routers
+app.include_router(career.router)
+app.include_router(career_matching.router)
+app.include_router(career_roadmap.router)
+app.include_router(auth.router)
+app.include_router(profiles.router)
+app.include_router(reviews.router)
+app.include_router(health.router)
+app.include_router(ingestion.router)
+app.include_router(analysis.router)
+app.include_router(jobs.router)
+app.include_router(search.router)
+app.include_router(retrieval.router)
+app.include_router(questions.router)
+app.include_router(investigations.router)
+app.include_router(repository_workspace.router)
+
+
+# Startup event
+@app.on_event("startup")
+async def startup_event():
+    """Verify migration head on startup; never create or alter tables here."""
+    try:
+        await init_db()
+        log.info("application_startup_completed")
+    except Exception as exc:
+        log.error("application_startup_failed", error=str(exc))
+        raise
+
+
+# Root endpoint
+@app.get("/")
+async def root():
+    """Health check endpoint."""
+    return {
+        "message": "RepoLens AI API is running",
+        "version": "1.0.0",
+    }
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(
+        "api.main:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=True,
+    )

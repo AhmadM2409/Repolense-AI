@@ -1,0 +1,45 @@
+{
+  "version": "phase22-semantic-exposed-diagnostic-v1",
+  "provenance": "ONE previously exposed failed case,retained as diagnostic only. Not independent,not a new15/16 assessment run. No production rule names these operations.",
+  "development": [
+    {
+      "id": "known-order",
+      "question": "How does MemoryQueue acknowledge messages and how does DiskQueue acknowledge messages?",
+      "documents": {
+        "memory.py": "class MemoryQueue:\n    def acknowledge(self):\n        return \"immediate\"",
+        "disk.py": "class DiskQueue:\n    def acknowledge(self):\n        self.fsync()\n        return \"after fsync\""
+      },
+      "cases": [
+        {
+          "id": "known-exposed-order",
+          "expected": false,
+          "expected_verdicts": [
+            "supported",
+            "contradicted"
+          ],
+          "claims": [
+            {
+              "text": "MemoryQueue acknowledges immediately.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            },
+            {
+              "text": "DiskQueue acknowledges before fsync.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E2"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "assessment": []
+}

@@ -1,0 +1,32 @@
+# RepoLens AI — local development database (PostgreSQL 16 + pgvector 0.8.2).
+#
+# Run the API, worker and frontend on the host (see README.md). For a fully
+# containerized API/worker stack, see docker-compose.jobs.yml instead.
+#
+# The password is read from an ignored compose env file, NOT from the application's
+# .env (the application rejects unknown keys there):
+#   cp .env.compose.example .env.compose   # then set REPOLENS_DB_PASSWORD
+#   docker compose --env-file .env.compose up -d db
+#
+# Bound to loopback only. Port 5435 avoids the jobs stack (5434).
+name: repolens-dev
+
+services:
+  db:
+    image: pgvector/pgvector:0.8.2-pg16@sha256:00ba258a66dac104fd5171074a0084462a64a1369d8513f3d0a634e2f24d15bc
+    environment:
+      POSTGRES_USER: repolens
+      POSTGRES_PASSWORD: ${REPOLENS_DB_PASSWORD:?Set REPOLENS_DB_PASSWORD in .env.compose}
+      POSTGRES_DB: repolens_dev
+    ports:
+      - "127.0.0.1:5435:5432"
+    volumes:
+      - repolens_dev_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U repolens -d repolens_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  repolens_dev_pgdata:

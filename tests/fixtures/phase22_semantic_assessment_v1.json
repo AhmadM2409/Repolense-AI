@@ -1,0 +1,549 @@
+{
+  "version": "phase22-semantic-assessment-v1",
+  "provenance": "Distinct synthetic assessment authored/labeled after general development stabilized,before any model execution. Assistant-authored judgments,not independent human evaluation. Neither original held-out nor the exposed15/16 set is reused.",
+  "development": [],
+  "assessment": [
+    {
+      "id": "publication",
+      "question": "Describe publish behavior.",
+      "documents": {
+        "publish.py": "def publish(item):\n    register(item)\n    return \"confirmation\""
+      },
+      "cases": [
+        {
+          "id": "publication-good",
+          "expected": true,
+          "expected_verdict": "supported",
+          "claims": [
+            {
+              "text": "publish registers the item before returning confirmation.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "publication-contradicted",
+          "expected": false,
+          "expected_verdict": "contradicted",
+          "claims": [
+            {
+              "text": "publish returns confirmation before registering the item.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "publication-insufficient",
+          "expected": false,
+          "expected_verdict": "insufficient",
+          "claims": [
+            {
+              "text": "Published items use a distributed consensus protocol.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "disabled",
+      "question": "Describe activate behavior.",
+      "documents": {
+        "activate.py": "class DisabledError(Exception):\n    pass\ndef activate(enabled):\n    if not enabled:\n        raise DisabledError()\n    return \"active\""
+      },
+      "cases": [
+        {
+          "id": "disabled-good",
+          "expected": true,
+          "expected_verdict": "supported",
+          "claims": [
+            {
+              "text": "activate raises DisabledError when enabled is false.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "disabled-contradicted",
+          "expected": false,
+          "expected_verdict": "contradicted",
+          "claims": [
+            {
+              "text": "activate returns \"active\" when enabled is false.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "disabled-insufficient",
+          "expected": false,
+          "expected_verdict": "insufficient",
+          "claims": [
+            {
+              "text": "The enabled flag is synchronized through Consul.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "predicate",
+      "question": "Describe hidden behavior.",
+      "documents": {
+        "hidden.py": "def hidden(visible):\n    return not visible"
+      },
+      "cases": [
+        {
+          "id": "predicate-good",
+          "expected": true,
+          "expected_verdict": "supported",
+          "claims": [
+            {
+              "text": "hidden returns True when visible is False.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "predicate-contradicted",
+          "expected": false,
+          "expected_verdict": "contradicted",
+          "claims": [
+            {
+              "text": "hidden returns True when visible is True.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "predicate-insufficient",
+          "expected": false,
+          "expected_verdict": "insufficient",
+          "claims": [
+            {
+              "text": "Visibility settings are backed up hourly.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "configuration",
+      "question": "Describe runtime configuration.",
+      "documents": {
+        "runtime.py": "CAPACITY = 11\nFEATURE = True"
+      },
+      "cases": [
+        {
+          "id": "configuration-good",
+          "expected": true,
+          "expected_verdict": "supported",
+          "claims": [
+            {
+              "text": "CAPACITY is 11 and FEATURE is True.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "configuration-contradicted",
+          "expected": false,
+          "expected_verdict": "contradicted",
+          "claims": [
+            {
+              "text": "FEATURE is False.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "configuration-insufficient",
+          "expected": false,
+          "expected_verdict": "insufficient",
+          "claims": [
+            {
+              "text": "Capacity is dynamically negotiated with a remote coordinator.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "literal",
+      "question": "Describe label behavior.",
+      "documents": {
+        "label.py": "def label():\n    return \"waiting\""
+      },
+      "cases": [
+        {
+          "id": "literal-good",
+          "expected": true,
+          "expected_verdict": "supported",
+          "claims": [
+            {
+              "text": "label returns \"waiting\".",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "literal-contradicted",
+          "expected": false,
+          "expected_verdict": "contradicted",
+          "claims": [
+            {
+              "text": "label returns \"ready\".",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "literal-insufficient",
+          "expected": false,
+          "expected_verdict": "insufficient",
+          "claims": [
+            {
+              "text": "Labels are persisted in MongoDB.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "io_error",
+      "question": "Describe probe behavior on OSError.",
+      "documents": {
+        "probe.py": "def probe(reader):\n    try:\n        reader()\n    except OSError:\n        return \"offline\"\n    return \"ready\""
+      },
+      "cases": [
+        {
+          "id": "io_error-good",
+          "expected": true,
+          "expected_verdict": "supported",
+          "claims": [
+            {
+              "text": "probe returns \"offline\" on OSError.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "io_error-contradicted",
+          "expected": false,
+          "expected_verdict": "contradicted",
+          "claims": [
+            {
+              "text": "probe re-raises OSError instead of returning a value.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "io_error-insufficient",
+          "expected": false,
+          "expected_verdict": "insufficient",
+          "claims": [
+            {
+              "text": "Readers use a configurable global connection pool.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "notification",
+      "question": "When does dispatch call notify?",
+      "documents": {
+        "dispatch.py": "def dispatch(approved):\n    if approved:\n        notify()\n        return \"sent\"\n    return \"blocked\""
+      },
+      "cases": [
+        {
+          "id": "notification-good",
+          "expected": true,
+          "expected_verdict": "supported",
+          "claims": [
+            {
+              "text": "dispatch calls notify only when approved is true.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "notification-contradicted",
+          "expected": false,
+          "expected_verdict": "contradicted",
+          "claims": [
+            {
+              "text": "dispatch calls notify only when approved is false.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "notification-insufficient",
+          "expected": false,
+          "expected_verdict": "insufficient",
+          "claims": [
+            {
+              "text": "Notifications are delivered over Kafka.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bound",
+      "question": "Describe admit behavior.",
+      "documents": {
+        "admit.py": "CEILING = 15\ndef admit(n):\n    return n < CEILING"
+      },
+      "cases": [
+        {
+          "id": "bound-good",
+          "expected": true,
+          "expected_verdict": "supported",
+          "claims": [
+            {
+              "text": "admit permits n < CEILING.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bound-contradicted",
+          "expected": false,
+          "expected_verdict": "contradicted",
+          "claims": [
+            {
+              "text": "admit permits n >= CEILING.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "bound-insufficient",
+          "expected": false,
+          "expected_verdict": "insufficient",
+          "claims": [
+            {
+              "text": "The service uses a distributed admission semaphore.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "missing_error",
+      "question": "Which function rejects missing values and what error does it raise?",
+      "documents": {
+        "parse.py": "class BadValue(Exception):\n    pass\ndef parse(value):\n    if not value:\n        raise BadValue()\n    return value"
+      },
+      "cases": [
+        {
+          "id": "missing-error-part",
+          "expected": false,
+          "expected_verdict": "supported",
+          "claims": [
+            {
+              "text": "parse rejects missing values.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "missing_return",
+      "question": "Which operation removes entries and what value does it return?",
+      "documents": {
+        "invalidate.py": "def invalidate(user):\n    store.delete(user)\n    return \"cleared\""
+      },
+      "cases": [
+        {
+          "id": "missing-return-part",
+          "expected": false,
+          "expected_verdict": "supported",
+          "claims": [
+            {
+              "text": "invalidate calls store.delete for the user.",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E1"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "invalid_citation",
+      "question": "Describe label behavior.",
+      "documents": {
+        "label.py": "def label():\n    return \"waiting\""
+      },
+      "cases": [
+        {
+          "id": "invalid-canonical-id",
+          "expected": false,
+          "expected_verdict": "invalid",
+          "claims": [
+            {
+              "text": "label returns \"waiting\".",
+              "kind": "observed",
+              "references": [
+                {
+                  "evidence_id": "E5"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "gates": {
+    "complete_supported_accept": "8/8",
+    "contradictions_reject": "8/8",
+    "insufficient_reject": "8/8",
+    "incomplete_reject": "2/2",
+    "invalid_citation_reject": "1/1",
+    "false_acceptances": "0",
+    "false_rejections": "0",
+    "four_way_labels": "Record full confusion matrix,malformed verdicts and server versus model labels;onlysupported may publish.",
+    "policy": "ONE final execution,no tuning afterward;all prior source/evaluation thresholds preserved."
+  }
+}

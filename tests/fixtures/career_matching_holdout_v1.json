@@ -1,0 +1,102 @@
+{
+  "version": "career-heldout-v1",
+  "status": "FROZEN_NOT_EXECUTED",
+  "created": "2026-11-03",
+  "data": "synthetic non-sensitive only",
+  "purpose": "Fresh prospective live quality checks; never substituted for mocked contract tests or historical acceptance.",
+  "thresholds": {
+    "all_cases_correct": true,
+    "canonical_citation_errors": 0,
+    "false_demonstrated": 0,
+    "scores_or_personal_skill_deficit_claims": 0,
+    "positive_controls_required": true
+  },
+  "cases": [
+    {
+      "id": "h1",
+      "job": "Implement request validation in an HTTP handler.",
+      "repositories": {
+        "demo/web": {
+          "handler.py": "from fastapi import FastAPI\napp = FastAPI()\n@app.post(\"/items\")\ndef accept(payload: dict):\n    if not payload:\n        raise ValueError(\"empty payload\")\n    return payload\n"
+        }
+      },
+      "expected": "demonstrated",
+      "evidence_paths": [
+        "handler.py"
+      ]
+    },
+    {
+      "id": "h2",
+      "job": "Persist changes and roll back failed database transactions.",
+      "repositories": {
+        "demo/store": {
+          "store.py": "def save(db, item):\n    db.add(item)\n    db.commit()\n"
+        }
+      },
+      "expected": "partially demonstrated",
+      "missing": "rollback on failure",
+      "evidence_paths": [
+        "store.py"
+      ]
+    },
+    {
+      "id": "h3",
+      "job": "Implement a Redis-backed cache.",
+      "repositories": {
+        "demo/cache": {
+          "README.md": "The application is designed to use a Redis-backed cache.\n"
+        }
+      },
+      "expected": "documented/claimed",
+      "evidence_paths": [
+        "README.md"
+      ]
+    },
+    {
+      "id": "h4",
+      "job": "Configure Kubernetes deployment manifests.",
+      "repositories": {
+        "demo/tool": {
+          "main.py": "def greet():\n    return \"hello\"\n"
+        }
+      },
+      "expected": "not evidenced",
+      "evidence_paths": []
+    },
+    {
+      "id": "h5",
+      "job": "Admit a parcel only when its mass is strictly below the configured limit.",
+      "repositories": {
+        "demo/gate": {
+          "gate.py": "from limits import MAX_MASS\ndef admit(mass):\n    return mass < MAX_MASS\n",
+          "limits.py": "MAX_MASS = 67\n"
+        }
+      },
+      "expected": "demonstrated",
+      "required_facts": [
+        "strictly less than",
+        "67"
+      ],
+      "evidence_paths": [
+        "gate.py",
+        "limits.py"
+      ],
+      "note": "A bounded retrieval/context miss must abstain or fail quality, never invent the missing cross-file fact."
+    },
+    {
+      "id": "h6",
+      "job": "Implement a RabbitMQ message producer.",
+      "repositories": {
+        "demo/queue": {
+          "requirements.txt": "pika==1.3.2\n"
+        }
+      },
+      "expected": "documented/claimed",
+      "evidence_paths": [
+        "requirements.txt"
+      ],
+      "note": "Only the dependency declaration is evidenced; a working producer is not established."
+    }
+  ],
+  "authoring_note": "HTTP route declaration made explicit during preflight, before any quality execution; final freeze is the SHA256 recorded in the J2 report. No historical evaluation changed."
+}

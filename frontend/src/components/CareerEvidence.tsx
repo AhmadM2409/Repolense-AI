@@ -1,0 +1,12 @@
+import { Link } from 'react-router-dom'
+import type { CareerCitation, Manifest, RequirementMatch } from '../types/career'
+export function CareerEvidence({ citations, manifest }: {citations:CareerCitation[]; manifest:Manifest}) {
+  return <div className="mt-3 space-y-2">{!citations.length ? <p className="text-sm text-slate-600">No canonical citation was established within the inspected coverage.</p> : citations.map((c,i) => {
+    const repo = manifest.revisions.find(r=>r.repository_id===c.repository_id && r.revision_id===c.revision_id)
+    return <details key={`${c.repository_id}/${c.chunk_id}/${i}`} className="rounded-lg border border-slate-200 bg-white"><summary className="cursor-pointer break-all px-4 py-3 text-sm font-medium text-blue-800">{repo?.full_name} · {c.path}:{c.line_start}–{c.line_end} · {c.evidence_kind}</summary><div className="space-y-3 border-t p-4"><p className="break-all font-mono text-xs">Repository {c.repository_id} · Revision {c.revision_id} · Commit {c.commit_sha}</p><pre className="overflow-auto whitespace-pre-wrap break-words rounded bg-slate-950 p-4 text-sm text-white"><code>{c.quote}</code></pre><p className="break-all text-xs text-slate-500">Source {c.source_id} · Chunk {c.chunk_id} · Inclusive lines {c.line_start}–{c.line_end}</p><Link className="text-sm text-blue-700 underline" to={`/workspace?repository=${c.repository_id}&revision=${c.revision_id}`}>Open this revision in Repository AI</Link></div></details>
+  })}</div>
+}
+export function CareerObservation({match,manifest}:{match:RequirementMatch;manifest:Manifest}) {
+  const metrics: [string,unknown][] = [['Revisions searched',match.coverage.searched_revisions],['Excerpts included',match.coverage.included_excerpts],['Candidates omitted',match.coverage.omitted_candidates],['Excerpts truncated',match.coverage.truncated_excerpts],['Context limited',match.coverage.context_limited]]
+  return <div><p className="font-semibold text-slate-900">{match.classification}</p><p className="mt-2 whitespace-pre-wrap">{match.explanation}</p><p className="mt-2 text-sm text-slate-600">{match.uncertainty}</p><details className="mt-2 text-sm"><summary className="cursor-pointer">Inspected coverage and limitations</summary><dl className="mt-2 space-y-1">{metrics.map(([label,value])=><div key={label}><dt className="inline font-medium">{label}: </dt><dd className="inline">{typeof value==='boolean'?(value?'yes':'no'):typeof value==='number'?String(value):'not reported'}</dd></div>)}</dl></details><CareerEvidence citations={match.citations} manifest={manifest}/></div>
+}

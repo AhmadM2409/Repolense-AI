@@ -1,0 +1,8 @@
+# Optional local hooks. They run only on files you change, so inherited style debt
+# elsewhere is not touched. Ruff is the formatter used by the project checks.
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.3
+    hooks:
+      - id: ruff
+      - id: ruff-format
